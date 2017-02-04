@@ -43,7 +43,7 @@ export function stacksChart(){
 
     //set data for one fi
     var fi = svg.selectAll("g.fi")
-      .data(data, function(d) { console.log(d.key); return d.key;})
+      .data(data, function(d) { return d.key;})
     ;
 
     //Position each stack on x axis 
@@ -69,7 +69,7 @@ export function stacksChart(){
         .attr("class", function(d){ return classMapFunction(d)})
       .merge(gUpdate)
         .transition()
-        .duration(1000)
+        .duration(2000)
         .attr("y", function(d) { return y(d[0][1]); })   
         .attr("height", function(d) { return  y(d[0][0]) - y(d[0][1]); })
     ;
@@ -79,7 +79,7 @@ export function stacksChart(){
       .transition()
       .duration(1000)
       .attr("height", 0)
-      .attr("y", 0)
+      //.attr("y", 0)
       //.remove();
     ;
 

@@ -86,23 +86,96 @@ data[5].groups = [ {
 }]
 data[5].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
 
-var dataTwo = [ {key: "fiName"}, { key: "fiName2"}];
+/*****************/
+
+var dataTwo = [ {key: "fiName"}, { key: "fiName2"}, { key: "fiName3"}, { key: "fiName4"}, { key: "fiName5"}, { key: "fiName6"}];
+
 dataTwo[0].groups = [{
   "sig_debit" : 0.5,
-  "sig_credit" : 0.5, 
+  "sig_credit" : 0.5,
   total: 1
 }];
-dataTwo[0].groups.columns = [ "sig_debit", "sig_credit"];
+dataTwo[0].groups.columns = [ "sig_debit", "sig_credit"]
+
 dataTwo[1].groups = [ {
   "sig_debit" : 0.5,
   "sig_credit" : 0.5,
-  
   total: 1
 }]
-dataTwo[1].groups.columns = [ "sig_debit", "sig_credit"];
+dataTwo[1].groups.columns = [ "sig_debit", "sig_credit"]
+
+dataTwo[2].groups = [ {
+  "sig_debit" : 0.5,
+  "sig_credit" : 0.5,
+  total: 1
+}]
+dataTwo[2].groups.columns = [ "sig_debit", "sig_credit"]
+
+dataTwo[3].groups = [ {
+  "sig_debit" : 0.5,
+  "sig_credit" : 0.5,
+  total: 1
+}]
+dataTwo[3].groups.columns = [ "sig_debit", "sig_credit"]
+
+dataTwo[4].groups = [ {
+  "sig_debit" : 0.5,
+  "sig_credit" : 0.5,
+  total: 1
+}]
+dataTwo[4].groups.columns = [ "sig_debit", "sig_credit"]
+
+dataTwo[5].groups = [ {
+  "sig_debit" : 0.5,
+  "sig_credit" : 0.5,
+  total: 1
+}]
+dataTwo[5].groups.columns = [ "sig_debit", "sig_credit"]
+
+/*****************/
+
+var dataThree = [ {key: "fiName"}, { key: "fiName2"}, { key: "fiName3"}, { key: "fiName4"}, { key: "fiName5"}, { key: "fiName6"}];
+
+dataThree[0].groups = [{
+  "sig_debit" : 1,
+  total: 1
+}];
+dataThree[0].groups.columns = [ "sig_debit"]
+
+dataThree[1].groups = [ {
+  "sig_debit" : 1,
+  total: 1
+}]
+dataThree[1].groups.columns = [ "sig_debit"]
+
+dataThree[2].groups = [ {
+  "sig_debit" : 1,
+  total: 1
+}]
+dataThree[2].groups.columns = [ "sig_debit"]
+
+dataThree[3].groups = [ {
+  "sig_debit" : 1,
+  total: 1
+}]
+dataThree[3].groups.columns = [ "sig_debit"]
+
+dataThree[4].groups = [ {
+  "sig_debit" : 1,
+  total: 1
+}]
+dataThree[4].groups.columns = [ "sig_debit"]
+
+dataThree[5].groups = [ {
+  "sig_debit" : 1,
+  total: 1
+}]
+dataThree[5].groups.columns = [ "sig_debit"]
+
 
 window.data= data;
 window.dataTwo = dataTwo;
+window.dataThree = dataThree;
 
 var testStacks = stacksChart()
   .margin({top: 0, left: 0, right: 0, bottom: 0})
