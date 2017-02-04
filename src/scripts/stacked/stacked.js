@@ -8,20 +8,15 @@
 
 import * as d3 from "d3";
 
-/**
- * @function stackChart
- * @description Creates and configures the charting function 
- * @returns {function} chart - Charting function that takes an svg selection and data
- */
-export default function stackChart(){
+export function stacksChart(){
   var margin = {top: 30, right: 40, bottom: 50, left: 40};
   var width =0;// 900 - margin.left - margin.right;
   var height =0;// 300 - margin.top - margin.bottom;
 
-//  var x = d3.scaleBand();
+  var x = d3.scaleBand();
   var y = d3.scaleLinear();
   var y2 = d3.scaleLinear();
-  //var z = d3.scaleOrdinal(d3.schemeCategory20);
+  var z = d3.scaleOrdinal(d3.schemeCategory20);
   var classMapFunction = function (d){
     return classMap[ d.key ];
   }
@@ -32,96 +27,90 @@ export default function stackChart(){
 
 
 function chart(svg, data){
-  d3.selectAll("g.serie").transition().duration(1000).style("opacity", 0).remove();
-  console.log(data);
 
-  var x = d3.scaleBand()
-      .rangeRound([0, width - margin.left - margin.right])
-      .padding(0.5)
-      //.align(0.3)
-      ;
+  x
+    .rangeRound([width - margin.left - margin.right, 0])
+    .domain( data.map( function(d){ return d.key} ) )
+    .padding(0.5)
+  ;
+  
+  y
+    .rangeRound([0,height -margin.top - margin.bottom])
+    .domain([0, d3.max(data, function(d) { return 1; })]).nice()
+  ;
+  
+  y2
+    .rangeRound([height - margin.top - margin.bottom, 0 ])
+    .domain([0, d3.max(data, function(d) { return 1; })]).nice()
+  ;
 
-  var y = d3.scaleLinear()
-      .rangeRound([height-margin.top - margin.bottom, 0]);
+  var fi = svg.selectAll("g.fi")
+    .data(data, function(d) {return d.key;})
+  ;
 
-  var stack = d3.stack();
+  var enterAndUpdate = fi.enter().append("g")
+    .merge(fi)
+    .attr("class", "fi")
+    .attr("transform", function(d){ return "translate(" + x(d.key) + ",0)"} )
+  ; 
+
+  var stack = d3.stack().keys(data[0].groups.columns);
+
+  var gUpdate = enterAndUpdate.selectAll("rect")
+  .data( function (d) { return stack(d.groups) }, function(d){return d.key});
+
+  var g = gUpdate
+    .enter()
+      .append("rect")
+      .attr("width", x.bandwidth())
+      .attr("class", function(d){ return classMapFunction(d)})
+    .merge(gUpdate)
+      .transition()
+      .duration(1000)
+      .attr("y", function(d) { return y2(d[0][1]); })   
+      .attr("height", function(d) { return  y(d[0][1]) - y(d[0][0]); })
+  ;
+
+  gUpdate.exit()
+    .transition()
+    .duration(1000)
+    .attr("height", 0)
+    .attr("y", 0)
+  ;
 
 
-
-
-   var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    data.sort(function(a, b) { return b.total - a.total; });
-
-    x.domain(data.map(function(d) { return d.key; }));
-    y.domain([0, d3.max(data, function(d) { return d.total; })]).nice();
-   // z.domain(data.columns.slice(1));
-
-
-
-    var newg = g.selectAll(".serie")
-      .data(stack.keys(data.columns.slice(1))(data))
-      .enter().append("g")
-        .attr("class", function(d){ return "serie " + classMapFunction(d) })
-        .style("opacity", 0);
-        newg
-        .transition()
-        .duration(1000)
-        .style("opacity", 1)
-//        .attr("class", classMapFunction)
-        //.exit().remove()
-        ;
-    
-   var rectUpdate= newg
-      .selectAll("rect")
-      .data(function(d) { console.log(d); return d; });
-
-    rectUpdate
-      .enter().append("rect")
-        .attr("x", function(d) { return x(d.data.key); })   
-        .attr("width", x.bandwidth())
-        .merge(rectUpdate)
-        .attr("y", function(d) { return y(d[1]); })
-        .attr("height", function(d) { return y(d[0]) - y(d[1]); })
-        .exit()
-        .attr("height", 0)
-        .remove();
+  if (svg.selectAll(".y-axis")._groups[0].length<1){
+    // y axis
+    svg.append("g")
+      .attr("class", "y-axis")
+      .call(
+        d3.axisLeft(y2)
+        .ticks(4, "%")
+      )
     ;
-
-    var yAxis = d3.axisLeft()
-        .scale(y)
-        .ticks(5)
-    ;
-
-      svg.append("g")
-        .attr("class", "y axis")
-        .attr("transform", "translate("+ margin.left + ", " + margin.top + ")")
-        .call(yAxis)
-      ;  
-    
-    var xAxis = d3.axisBottom()
-        .scale(x)
-        .tickSize(0)
-        .tickPadding(10)
-    ;
-
-
-
-      var n = height - margin.bottom;
-      svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate("+ margin.left + ","+ n + ")")
-        .call(xAxis)
-      ;  
-    
-  //});
-
-  function type(d, i, columns) {
-    var t = 0;
-    for (i = 1, t = 0; i < columns.length; ++i) t += d[columns[i]] = +d[columns[i]];
-    d.total = t;
-    return d;
   }
+
+  var p = height - margin.bottom - margin.top;
+
+  var xAxis = d3.axisBottom()
+      .scale(x)
+      .tickSize(0)
+  ;
+
+  if (svg.selectAll(".x.axis")._groups[0].length < 1){
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate("+ "0"+"," +p + ")")
+      .call(xAxis)
+    ;  
+  }
+
+//    if (svg.selectAll(".y.axis")._groups[0].length < 1){
+//      svg.append("g")
+//        .attr("class", "y axis")
+//        .call(yAxis)
+//      ;  
+//    }
 }
 
 chart.width = function(value){
