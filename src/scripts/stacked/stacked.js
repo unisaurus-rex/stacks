@@ -9,14 +9,14 @@
 import * as d3 from "d3";
 
 export function stacksChart(){
+  //Default Parameters
   var margin = {top: 30, right: 40, bottom: 50, left: 40};
   var width =0;// 900 - margin.left - margin.right;
   var height =0;// 300 - margin.top - margin.bottom;
 
   var x = d3.scaleBand();
   var y = d3.scaleLinear();
-  var y2 = d3.scaleLinear();
-  var z = d3.scaleOrdinal(d3.schemeCategory20);
+
   var classMapFunction = function (d){
     return classMap[ d.key ];
   }
@@ -25,97 +25,94 @@ export function stacksChart(){
   "Family Clothing": "fill-gray-light", "Fast Food": "fill-orange-yellow",
   "Pharmacies": "fill-teal", "All Others": "fill-gray-dark" };
 
+  /***********************************************************************/
+  function chart(svg, data){
 
-function chart(svg, data){
+    //set x scale
+    x
+      .rangeRound([width - margin.left - margin.right, 0])
+      .domain( data.map( function(d){ return d.key} ) )
+      .padding(0.5)
+    ;
+    
+    //set y scale
+    y
+      .rangeRound([height - margin.top - margin.bottom, 0 ])
+      .domain([0, d3.max(data, function(d) { return 1; })]).nice()
+    ;
 
-  x
-    .rangeRound([width - margin.left - margin.right, 0])
-    .domain( data.map( function(d){ return d.key} ) )
-    .padding(0.5)
-  ;
-  
-  y
-    .rangeRound([0,height -margin.top - margin.bottom])
-    .domain([0, d3.max(data, function(d) { return 1; })]).nice()
-  ;
-  
-  y2
-    .rangeRound([height - margin.top - margin.bottom, 0 ])
-    .domain([0, d3.max(data, function(d) { return 1; })]).nice()
-  ;
+    //set data for one fi
+    var fi = svg.selectAll("g.fi")
+      .data(data, function(d) { console.log(d.key); return d.key;})
+    ;
 
-  var fi = svg.selectAll("g.fi")
-    .data(data, function(d) {return d.key;})
-  ;
+    //Position each stack on x axis 
+    var enterAndUpdate = fi
+      .enter()
+        .append("g")
+      .merge(fi)
+        .attr("class", "fi")
+        .attr("transform", function(d){ return "translate(" + x(d.key) + ",0)"} )
+    ;
 
-  var enterAndUpdate = fi
-    .enter()
-      .append("g")
-    .merge(fi)
-      .attr("class", "fi")
-      .attr("transform", function(d){ return "translate(" + x(d.key) + ",0)"} )
-    .exit()
-    .remove()
-  ; 
+    //Rectangles / layers for each stack
+    var stack = d3.stack().keys(data[0].groups.columns);
 
-  var stack = d3.stack().keys(data[0].groups.columns);
+    var gUpdate = enterAndUpdate.selectAll("rect")
+      .data( function (d) { return stack(d.groups) }, function(d){return d.key});
+    
+    //Draw all rectangles / layers for one stack
+    gUpdate
+      .enter()
+        .append("rect")
+        .attr("width", x.bandwidth())
+        .attr("class", function(d){ return classMapFunction(d)})
+      .merge(gUpdate)
+        .transition()
+        .duration(1000)
+        .attr("y", function(d) { return y(d[0][1]); })   
+        .attr("height", function(d) { return  y(d[0][0]) - y(d[0][1]); })
+    ;
 
-  var gUpdate = enterAndUpdate.selectAll("rect")
-    .data( function (d) { return stack(d.groups) }, function(d){return d.key});
-
-  var g = gUpdate
-    .enter()
-      .append("rect")
-      .attr("width", x.bandwidth())
-      .attr("class", function(d){ return classMapFunction(d)})
-    .merge(gUpdate)
+    //Remove rectangles / layers if needed
+    gUpdate.exit()
       .transition()
       .duration(1000)
-      .attr("y", function(d) { return y2(d[0][1]); })   
-      .attr("height", function(d) { return  y(d[0][1]) - y(d[0][0]); })
-  ;
-
-  gUpdate.exit()
-    .transition()
-    .duration(1000)
-    .attr("height", 0)
-    .attr("y", 0)
-  ;
-
-
-  if (svg.selectAll(".y-axis")._groups[0].length<1){
-    // y axis
-    svg.append("g")
-      .attr("class", "y-axis")
-      .call(
-        d3.axisLeft(y2)
-        .ticks(4, "%")
-      )
+      .attr("height", 0)
+      .attr("y", 0)
+      //.remove();
     ;
+
+    /***** AXES *****/
+
+    //If there is currently no y axis draw one
+    if (svg.selectAll(".y-axis")._groups[0].length<1){
+      // y axis
+      svg.append("g")
+        .attr("class", "y-axis")
+        .call(
+          d3.axisLeft(y)
+          .ticks(4, "%")
+        )
+      ;
+    }
+
+
+    //If there is currently no x axis draw one
+    if (svg.selectAll(".x.axis")._groups[0].length < 1){
+      var p = height - margin.bottom - margin.top;
+
+      var xAxis = d3.axisBottom()
+          .scale(x)
+          .tickSize(0)
+      ;
+      svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate("+ "0"+"," +p + ")")
+        .call(xAxis)
+      ;  
+    }
   }
-
-  var p = height - margin.bottom - margin.top;
-
-  var xAxis = d3.axisBottom()
-      .scale(x)
-      .tickSize(0)
-  ;
-
-  if (svg.selectAll(".x.axis")._groups[0].length < 1){
-    svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate("+ "0"+"," +p + ")")
-      .call(xAxis)
-    ;  
-  }
-
-//    if (svg.selectAll(".y.axis")._groups[0].length < 1){
-//      svg.append("g")
-//        .attr("class", "y axis")
-//        .call(yAxis)
-//      ;  
-//    }
-}
 
 chart.width = function(value){
   if (!arguments.length) return width;
