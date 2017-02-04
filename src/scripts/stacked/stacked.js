@@ -48,16 +48,20 @@ function chart(svg, data){
     .data(data, function(d) {return d.key;})
   ;
 
-  var enterAndUpdate = fi.enter().append("g")
+  var enterAndUpdate = fi
+    .enter()
+      .append("g")
     .merge(fi)
-    .attr("class", "fi")
-    .attr("transform", function(d){ return "translate(" + x(d.key) + ",0)"} )
+      .attr("class", "fi")
+      .attr("transform", function(d){ return "translate(" + x(d.key) + ",0)"} )
+    .exit()
+    .remove()
   ; 
 
   var stack = d3.stack().keys(data[0].groups.columns);
 
   var gUpdate = enterAndUpdate.selectAll("rect")
-  .data( function (d) { return stack(d.groups) }, function(d){return d.key});
+    .data( function (d) { return stack(d.groups) }, function(d){return d.key});
 
   var g = gUpdate
     .enter()
