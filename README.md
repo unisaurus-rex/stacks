@@ -94,38 +94,67 @@ When you try to run your new spec, you may encounter errors loading files import
 3) Call the constructor function with optional arguments
 4) The constructor function returns a function that takes two parameters: a selection and data
 
-#### Data Structure
-Data should consist of an object and an array within an array. The object should have key value pairs that map to every segment of the stacked chart. A key value pair should be added that consists of the total of all the other data. The data object should also have a columns attribute that consists of all the keys (excluding the "total" key value pair). The total is used to determine the domain of the scales.
+#### Structure of data
+
 
 Example Data Structure:
+Data should consist of an array of objects. Each object represents a stack. Each object has an attribute "key" which maps to the fi name. Each object should have a attribute named groups which is an array that has values for each rectangle in the stack and a total (total should always be 1 if representing percentages that add up to 100%). Every "groups" attr should contain a columns attribute with the keys to groups that should be charted. Please see example.
 ```
-var exampleData = 
-[ 
-  { 
-    "All Others": 0.2, 
-    "Department Store": 0.2, 
-    "Family Clothing": 0.2, 
-    "Fast Food": 0.2, 
-    "Grocery": 0.2, 
-    "Pharmacies": 0.2,
-    total: 1
-  }
-];
-exampleData.columns = 
-[ 
-    "All Others", 
-    "Department Store", 
-    "Family Clothing", 
-    "Fast Food", 
-    "Grocery", 
-    "Pharmacies"
-]
+var exampleData = [ {key: "fiName"}, { key: "fiName2"}, { key: "fiName3"}, { key: "fiName4"}, { key: "fiName5"}, { key: "fiName6"}];
+
+exampleData[0].groups = [{
+  "sig_debit" : 0.25,
+  "sig_credit" : 0.25,
+  "pin_debit" : 0.5,
+  total: 1
+}];
+exampleData[0].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
+
+exampleData[1].groups = [ {
+  "sig_debit" : 0.25,
+  "sig_credit" : 0.25,
+  "pin_debit" : 0.50,
+  total: 1
+}]
+exampleData[1].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
+
+exampleData[2].groups = [ {
+  "sig_debit" : 0.25,
+  "sig_credit" : 0.25,
+  "pin_debit" : 0.50,
+  total: 1
+}]
+exampleData[2].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
+
+exampleData[3].groups = [ {
+  "sig_debit" : 0.25,
+  "sig_credit" : 0.25,
+  "pin_debit" : 0.50,
+  total: 1
+}]
+exampleData[3].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
+
+exampleData[4].groups = [ {
+  "sig_debit" : 0.25,
+  "sig_credit" : 0.25,
+  "pin_debit" : 0.50,
+  total: 1
+}]
+exampleData[4].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
+
+exampleData[5].groups = [ {
+  "sig_debit" : 0.25,
+  "sig_credit" : 0.25,
+  "pin_debit" : 0.50,
+  total: 1
+}]
+exampleData[5].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
 ```
 
 Example: 
 ``` 
-import stackChart from 'stacked';
-var function = stackChart();
+import stacksChart from 'stacked';
+var function = stacksChart();
 ```
 
 ## Configuration
@@ -149,45 +178,83 @@ classMapFunction (function)
 
 ## Example
 
-#### Importing module and creating svg
+#### Importing module 
 ```
 import stackChart from 'stacked/stacked.js';
 
-var svg = d3.select("#stackid")  .append("div")
-  .classed("svg-container", true)
-  .append("svg")
-  .attr("preserveAspectRatio", "xMinYMin meet")     
-  .attr("viewBox","0 0 " + 900 + " " + 300)
-  //class to make it responsive
-  .classed("svg-content-responsive", true)
-;
 ```
 #### Example data set
 ```
-var data= [ { "All Others": 0.2,
-  "Department Store": 0.2,
-  "Family Clothing": 0.2,
-  "Fast Food": 0.2,
-  "Grocery": 0.1,
-  "Pharmacies": 0.1,
-  total: 1 } ];
+  var data = [ {key: "fiName"}, { key: "fiName2"}, { key: "fiName3"}, { key: "fiName4"}, { key: "fiName5"}, { key: "fiName6"}];
 
-//add columns attribute
-data.columns = Object.keys(data[0]).filter(function (obj){
-  return obj != "total";
-})
+  data[0].groups = [{
+    "sig_debit" : 0.25,
+    "sig_credit" : 0.25,
+    "pin_debit" : 0.5,
+    total: 1
+  }];
+  data[0].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
+
+  data[1].groups = [ {
+    "sig_debit" : 0.25,
+    "sig_credit" : 0.25,
+    "pin_debit" : 0.50,
+    total: 1
+  }]
+  data[1].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
+
+  data[2].groups = [ {
+    "sig_debit" : 0.25,
+    "sig_credit" : 0.25,
+    "pin_debit" : 0.50,
+    total: 1
+  }]
+  data[2].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
+
+  data[3].groups = [ {
+    "sig_debit" : 0.25,
+    "sig_credit" : 0.25,
+    "pin_debit" : 0.50,
+    total: 1
+  }]
+  data[3].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
+
+  data[4].groups = [ {
+    "sig_debit" : 0.25,
+    "sig_credit" : 0.25,
+    "pin_debit" : 0.50,
+    total: 1
+  }]
+  data[4].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
+
+  data[5].groups = [ {
+    "sig_debit" : 0.25,
+    "sig_credit" : 0.25,
+    "pin_debit" : 0.50,
+    total: 1
+  }]
+  data[5].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
+
 ```
 #### Define variables to be passed to setters
 ```
 var classMapFunction = function (d){
   return classMap[ d.key ];
 }
-var classMap =  {"Department Store": "fill-blue", "Grocery": "fill-red",
-"Family Clothing": "fill-gray-light", "Fast Food": "fill-orange-yellow",
-"Pharmacies": "fill-teal", "All Others": "fill-gray-dark" };
-var margin = {top: 30, right: 40, bottom: 50, left: 40};
-var width =900;
-var height =300;
+var classMap =  {"pin_debit": "fill-blue", "sig_credit": "fill-red",
+"sig_debit": "fill-gray-light" };
+
+var margin = {top: 40, right: 40, bottom: 40, left: 40};
+var width =400;
+var height =150;
+
+//draw svg
+var svg = d3.select("#stackid")  .append("div")
+  .classed("svg-container", true)
+  .append("svg")
+  .attr("preserveAspectRatio", "xMinYMin meet")     
+  .attr("viewBox", -margin.left + " " + -margin.right + " "+ width + " " + height)
+;
 
 ```
 #### Configuration and function call
