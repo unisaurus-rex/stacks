@@ -1,55 +1,92 @@
-import stackChart from 'stacked';
+import {stacksChart} from 'stacked';
 import * as d3 from "d3";
 
 
-describe("The stack chart", function(){
+describe("The grouped stack chart", function(){
 
 	window.d3 = d3;
 	jasmine.clock().install();
 
-	var data= [ { "All Others": 0.2,
-	  "Department Store": 0.2,
-	  "Family Clothing": 0.2,
-	  "Fast Food": 0.2,
-	  "Grocery": 0.1,
-	  "Pharmacies": 0.1,
-	  total: 1 } ];
-		data.columns = Object.keys(data[0]).filter(function (obj){
-		  return obj != "total";
-		})
+	var data = [ {key: "fiName"}, { key: "fiName2"}, { key: "fiName3"}, { key: "fiName4"}, { key: "fiName5"}, { key: "fiName6"}];
+
+	data[0].groups = [{
+	  "sig_debit" : 0.25,
+	  "sig_credit" : 0.25,
+	  "pin_debit" : 0.5,
+	  total: 1
+	}];
+	data[0].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
+
+	data[1].groups = [ {
+	  "sig_debit" : 0.25,
+	  "sig_credit" : 0.25,
+	  "pin_debit" : 0.50,
+	  total: 1
+	}]
+	data[1].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
+
+	data[2].groups = [ {
+	  "sig_debit" : 0.25,
+	  "sig_credit" : 0.25,
+	  "pin_debit" : 0.50,
+	  total: 1
+	}]
+	data[2].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
+
+	data[3].groups = [ {
+	  "sig_debit" : 0.25,
+	  "sig_credit" : 0.25,
+	  "pin_debit" : 0.50,
+	  total: 1
+	}]
+	data[3].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
+
+	data[4].groups = [ {
+	  "sig_debit" : 0.25,
+	  "sig_credit" : 0.25,
+	  "pin_debit" : 0.50,
+	  total: 1
+	}]
+	data[4].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
+
+	data[5].groups = [ {
+	  "sig_debit" : 0.25,
+	  "sig_credit" : 0.25,
+	  "pin_debit" : 0.50,
+	  total: 1
+	}]
+	data[5].groups.columns = [ "sig_debit", "sig_credit", "pin_debit"]
 
 
 	beforeEach (function(){
 
-		var svg = d3.select("body")
-		  .append("div")
-			.classed("svg-container", true)
-			.append("svg")
-			.attr("preserveAspectRatio", "xMinYMin meet")     
-			.attr("viewBox","0 0 " + 900 + " " + 300)
-			//class to make it responsive
-			.classed("svg-content-responsive", true)
+		var margin = {top: 40, right: 40, bottom: 40, left: 40};
+		var width =400;
+		var height =150;
+
+		var svg = d3.select("body")  
+			.append("div")
+		  .classed("svg-container", true)
+		  .append("svg")
+		  .attr("preserveAspectRatio", "xMinYMin meet")     
+		  .attr("viewBox", -margin.left + " " + -margin.right + " "+ width + " " + height)
 		;
 
-		var margin = {top: 30, right: 40, bottom: 50, left: 40};
-		var width =900;
-		var height =300;
 
-		var classMap =  {"Department Store": "fill-blue bar", "Grocery": "fill-red bar",
-		"Family Clothing": "fill-gray-light bar", "Fast Food": "fill-orange-yellow bar",
-		"Pharmacies": "fill-teal bar", "All Others": "fill-gray-dark bar" };
-
+		var classMap =  {"pin_debit": "fill-blue", "sig_credit": "fill-red",
+		"sig_debit": "fill-gray-light", "Fast Food": "fill-orange-yellow",
+		"Pharmacies": "fill-teal", "All Others": "fill-gray-dark" };
 
 		var classMapFunction = function (d){
 			return classMap[ d.key ];
 		}
 
-		var testStack = stackChart()
+		var testStack = stacksChart()
 		  .margin(margin)
 		  .width(width)
 		  .height(height)
-		  .classMapFunction(classMapFunction)
 		  .classMap(classMap)
+		  .classMapFunction(classMapFunction)
 		;
 
 		testStack(svg, data)
@@ -64,34 +101,35 @@ describe("The stack chart", function(){
 		expect(d3.selectAll('svg')._groups[0][0]).toBeDefined();			
 	});
 
-	it('should create the correct amount of bars', function() { 
-		expect(d3.selectAll('.bar')._groups[0].length).toEqual(6);
+	it("should create the correct amount of stacks ", function() { 
+		expect(d3.selectAll('.fi')._groups[0].length).toEqual(6);
 	});
 
-	it('should create every bar with two classes', function() {		
+	it("should create the correct amount of rect elements", function() { 
+		expect(d3.selectAll('.fi rect')._groups[0].length).toEqual(18);
+	});
+
+	it('should create every rect with one classe', function() {		
 		var classes = 0;
-			var bars = d3.selectAll('.bar')._groups[0];
-			
-			for(var i =0; i< bars.length; i++){
-				classes = classes + bars[i].classList.length
-			}
-		expect( classes).toEqual(12);
+		var rects = d3.selectAll('.fi rect')._groups[0];
+
+		for(var i =0; i< rects.length; i++){
+			classes = classes + rects[i].classList.length
+		}
+		expect( classes).toEqual(18);
 
 	});
 
-	it('should create every bar with a valid class', function(done) {
+	it('should create every rect with a valid class', function(done) {
 		
-		var bars = d3.selectAll('.bar')._groups[0];
+		var bars = d3.selectAll('.fi rect')._groups[0];
 		var test = true;
 
 		setInterval(function(){
 			for(var i =0; i< bars.length; i++){		
 				if ( !(bars[i].classList[0] == "fill-blue" ||
 					 bars[i].classList[0] == "fill-red" ||
-					 bars[i].classList[0] == "fill-gray-light" ||
-					 bars[i].classList[0] == "fill-orange-yellow" ||
-					 bars[i].classList[0] == "fill-teal" || 
-					 bars[i].classList[0] == "fill-gray-dark" ) && test == true){
+					 bars[i].classList[0] == "fill-gray-light") && test == true){
 						test = false
 				}//end if
 			}//end for

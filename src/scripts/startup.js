@@ -4,12 +4,12 @@ import bootstrap from 'bootstrap-sass';
 import {stacksChart} from 'stacked';
 import * as d3 from "d3";
 
-
+//set up sizing
 var margin = {top: 40, right: 40, bottom: 40, left: 40};
 var width =400;
 var height =150;
-
-  
+ 
+//draw svg
 var svg = d3.select("#stackid")  .append("div")
   .classed("svg-container", true)
   .append("svg")
@@ -17,9 +17,7 @@ var svg = d3.select("#stackid")  .append("div")
   .attr("viewBox", -margin.left + " " + -margin.right + " "+ width + " " + height)
 ;
 
-window.svg = svg;
-window.d3 = d3;
-
+//setup config objects
 var classMapFunction = function (d){
   return classMap[ d.key ];
 }
@@ -28,14 +26,7 @@ var classMap =  {"pin_debit": "fill-blue", "sig_credit": "fill-red",
 "sig_debit": "fill-gray-light", "Fast Food": "fill-orange-yellow",
 "Pharmacies": "fill-teal", "All Others": "fill-gray-dark" };
 
-var testStack = stacksChart()
-  .margin(margin)
-  .width(width)
-  .height(height)
-  .classMap(classMap)
-  .classMapFunction(classMapFunction)
-;
-
+//create test data
 var data = [ {key: "fiName"}, { key: "fiName2"}, { key: "fiName3"}, { key: "fiName4"}, { key: "fiName5"}, { key: "fiName6"}];
 
 data[0].groups = [{
@@ -137,54 +128,57 @@ dataTwo[5].groups.columns = [ "sig_debit", "sig_credit"]
 var dataThree = [ {key: "fiName"}, { key: "fiName2"}, { key: "fiName3"}, { key: "fiName4"}, { key: "fiName5"}, { key: "fiName6"}];
 
 dataThree[0].groups = [{
-  "sig_debit" : 1,
+  "pin_debit" : 1,
   total: 1
 }];
-dataThree[0].groups.columns = [ "sig_debit"]
+dataThree[0].groups.columns = [ "pin_debit"]
 
 dataThree[1].groups = [ {
-  "sig_debit" : 1,
+  "pin_debit" : 1,
   total: 1
 }]
-dataThree[1].groups.columns = [ "sig_debit"]
+dataThree[1].groups.columns = [ "pin_debit"]
 
 dataThree[2].groups = [ {
-  "sig_debit" : 1,
+  "pin_debit" : 1,
   total: 1
 }]
-dataThree[2].groups.columns = [ "sig_debit"]
+dataThree[2].groups.columns = [ "pin_debit"]
 
 dataThree[3].groups = [ {
-  "sig_debit" : 1,
+  "pin_debit" : 1,
   total: 1
 }]
-dataThree[3].groups.columns = [ "sig_debit"]
+dataThree[3].groups.columns = [ "pin_debit"]
 
 dataThree[4].groups = [ {
-  "sig_debit" : 1,
+  "pin_debit" : 1,
   total: 1
 }]
-dataThree[4].groups.columns = [ "sig_debit"]
+dataThree[4].groups.columns = [ "pin_debit"]
 
 dataThree[5].groups = [ {
-  "sig_debit" : 1,
+  "pin_debit" : 1,
   total: 1
 }]
-dataThree[5].groups.columns = [ "sig_debit"]
+dataThree[5].groups.columns = [ "pin_debit"]
 
-
-window.data= data;
-window.dataTwo = dataTwo;
-window.dataThree = dataThree;
-
+//congif chart
 var testStacks = stacksChart()
-  .margin({top: 0, left: 0, right: 0, bottom: 0})
-  .width(width - margin.left - margin.right)
-  .height(height - margin.top - margin.bottom)
+  .margin( margin)
+  .width(width )
+  .height(height )
   .classMap(classMap)
   .classMapFunction(classMapFunction)
 ;
 
+//add to window for testing
+window.data= data;
+window.dataTwo = dataTwo;
+window.dataThree = dataThree;
+window.svg = svg;
+window.d3 = d3;
 window.testStack = testStacks;
 
+//draw chart
 testStacks(svg, data);
